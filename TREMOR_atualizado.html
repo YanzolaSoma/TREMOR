@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TREMOR — Rede Social</title>
+
+<style>
+:root{
+  --bg:#0a101c;
+  --panel:#111b2b;
+  --panel2:#172338;
+  --border:#2a3a52;
+  --text:#f2f5fb;
+  --muted:#a1b0c7;
+  --red:#ff5368;
+  --green:#67e6a6;
+  --blue:#8ab8ff;
+  --yellow:#ffd078;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea{font:inherit}
+button{
+  cursor:pointer;
+  color:white;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 12px;
+}
+button:hover{background:#263954}
+button:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:2px;
+}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#0a101cf5;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.topbar-inner{
+  max-width:1250px;
+  margin:auto;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.brand{font-size:23px;font-weight:900;letter-spacing:2px}
+.brand span{color:var(--red)}
+.status{color:#ff9aa8;font-size:10px;font-weight:bold}
+.layout{
+  max-width:1250px;
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:215px minmax(0,1fr) 265px;
+  gap:16px;
+  align-items:start;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:13px;
+}
+.sidebar{position:sticky;top:82px}
+.nav-button{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin-bottom:6px;
+}
+.nav-button.active,.filter.active{
+  background:#e43d55;
+  border-color:#e43d55;
+}
+.section-title{
+  margin:19px 0 10px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.disclaimer{
+  padding:14px;
+  margin-bottom:13px;
+  border:1px solid #873447;
+  border-radius:14px;
+  background:#351925;
+  font-size:12px;
+}
+.disclaimer strong{color:#ff8c9a}
+.disclaimer p{margin-bottom:0;line-height:1.5}
+.composer{display:flex;gap:11px}
+.composer img{
+  width:43px;height:43px;object-fit:cover;border-radius:50%;
+  background:#283852;
+}
+.composer-content{flex:1;min-width:0}
+textarea,input{
+  background:#0b1423;
+  color:white;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+}
+textarea{width:100%;min-height:78px;resize:vertical}
+.composer-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-top:9px;
+}
+.primary{background:var(--red);border-color:var(--red);font-weight:bold}
+.filters{display:flex;gap:7px;overflow-x:auto;margin-bottom:13px}
+.filters button{white-space:nowrap;font-size:12px}
+.post{padding:14px;overflow-wrap:anywhere}
+.post-header{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:43px;height:43px;flex-shrink:0;
+  object-fit:cover;border-radius:50%;
+  background:#283852;border:1px solid #3a4a64;
+}
+.author{flex:1;min-width:0}
+.author strong{display:block;font-size:13px}
+.handle{font-size:10px;color:var(--muted)}
+.badge{
+  font-size:9px;font-weight:bold;
+  border-radius:6px;padding:4px 6px;
+  background:#26364e;
+}
+.badge.verified{background:#153b31;color:#8cebb9}
+.badge.rumor{background:#482d1b;color:#ffd18c}
+.post-text{white-space:pre-wrap;margin:13px 0;line-height:1.6;font-size:14px}
+.post-actions{
+  display:flex;flex-wrap:wrap;gap:6px;
+  border-top:1px solid #26344b;padding-top:10px;
+}
+.post-actions button{font-size:11px;background:transparent}
+.post-actions button.liked{color:#ff8e9d}
+.comments{
+  display:none;margin-top:11px;padding:10px;
+  background:#0c1524;border-radius:10px;
+}
+.comments.visible{display:block}
+.comment{font-size:12px;margin:8px 0;overflow-wrap:anywhere}
+.comment-form{display:flex;gap:6px;margin-top:10px}
+.comment-form input{flex:1;min-width:0;width:50%}
+.person{display:flex;align-items:center;gap:9px;margin:10px 0}
+.person img{width:35px;height:35px;object-fit:cover;border-radius:50%}
+.person strong{display:block;font-size:12px;overflow-wrap:anywhere}
+.person small{color:var(--muted);font-size:10px}
+.trend{padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.trend:last-child{border-bottom:0}
+.trend small{display:block;color:var(--muted);margin-top:3px}
+.education{font-size:12px;line-height:1.65;color:#d5dfef}
+.full-button{width:100%;margin-top:9px}
+.progress{height:6px;border-radius:10px;background:#2a354b;overflow:hidden;margin:10px 0}
+.progress div{height:100%;background:var(--red);width:25%;transition:width .2s}
+.view{display:none}
+.view.active{display:block}
+.view-title{font-size:22px;margin:5px 0 8px}
+.view-description{color:var(--muted);font-size:13px;line-height:1.6}
+.fact-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:16px;
+  margin:12px 0;
+}
+.fact-card h3{margin:0 0 8px;font-size:16px}
+.fact-card p{font-size:13px;line-height:1.7;color:#d5dfef}
+.fact-icon{font-size:25px}
+.quiz-question{font-size:16px;font-weight:bold;line-height:1.6}
+.quiz-option{
+  display:block;width:100%;text-align:left;
+  margin:9px 0;padding:12px;
+}
+.quiz-option.correct{background:#16412f;border-color:#3a9e71}
+.quiz-option.wrong{background:#48202b;border-color:#b94a60}
+.quiz-feedback{font-size:13px;line-height:1.6;margin-top:12px}
+.quiz-score{color:var(--yellow);font-weight:bold}
+.toast{
+  position:fixed;z-index:50;bottom:20px;left:50%;
+  transform:translateX(-50%);
+  background:#f0f5ff;color:#101827;
+  border-radius:10px;padding:12px 16px;
+  font-size:12px;font-weight:bold;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  max-width:90%;text-align:center;
+}
+.toast.visible{opacity:1}
+.modal-backdrop{
+  position:fixed;inset:0;z-index:100;
+  background:#030711eF;
+  display:grid;place-items:center;padding:18px;
+}
+.modal{
+  width:min(470px,100%);
+  max-height:90vh;overflow-y:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;padding:22px;
+  box-shadow:0 20px 70px #0009;
+}
+.modal h1,.modal h2{margin-top:0}
+.modal p{font-size:13px;line-height:1.6;color:#d5dfef}
+.modal label{display:block;margin:13px 0 6px;font-size:12px;font-weight:bold}
+.modal input{width:100%}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.profile-preview{
+  display:flex;align-items:center;gap:12px;margin-top:12px;
+  background:#0b1423;padding:10px;border-radius:12px;
+}
+.profile-preview img{width:52px;height:52px;border-radius:50%;object-fit:cover}
+footer{text-align:center;color:#74849e;font-size:10px;padding:25px 15px}
+@media(max-width:1050px){
+  .layout{grid-template-columns:190px minmax(0,1fr)}
+  .right-sidebar{display:none}
+}
+@media(max-width:680px){
+  .layout{display:block;padding:12px}
+  .left-sidebar{position:static}
+  .brand{font-size:19px}
+  .status{font-size:9px}
+  .composer{padding:11px}
+  .post{padding:12px}
+  .post-actions button{flex:1}
+  .layout .left-sidebar{display:none}
+  .mobile-menu{display:block!important}
+}
+.mobile-menu{display:none}
+</style>
+</head>
+
+<body>
+
+<!-- TELA INICIAL: ESCOLHA DO PERFIL -->
+<div class="modal-backdrop" id="profileModal">
+  <section class="modal">
+    <h1>🌎 Bem-vindo à <span style="color:var(--red)">TREMOR</span></h1>
+    <p>Antes de entrar na rede, escolha como você quer aparecer. Você pode usar qualquer nome e colar um link para sua foto de perfil.</p>
+
+    <form id="profileForm">
+      <label for="usernameInput">Nome de usuário</label>
+      <input id="usernameInput" maxlength="24" placeholder="Ex.: YanDev" required>
+
+      <label for="photoInput">Link da foto de perfil (opcional)</label>
+      <input id="photoInput" type="url" placeholder="https://exemplo.com/minha-foto.jpg">
+
+      <div class="profile-preview">
+        <img id="profilePreview" alt="Prévia da foto" src="https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba">
+        <div>
+          <strong id="previewName">Seu nome aparecerá aqui</strong>
+          <div style="font-size:11px;color:var(--muted)">Prévia do seu perfil</div>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:var(--muted)">Dica: o link deve apontar diretamente para uma imagem pública. Alguns sites bloqueiam imagens externas.</p>
+
+      <div class="modal-actions">
+        <button class="primary" type="submit">Confirmar e entrar →</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">〰 <span>TREMOR</span></div>
+    <div class="status" id="status">● SIMULAÇÃO FICTÍCIA</div>
+    <button id="notifications">🔔 <span id="notificationCount">3</span></button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- MENU LATERAL -->
+  <aside class="left-sidebar sidebar">
+    <section class="panel">
+      <h3 style="margin-top:0">Navegação</h3>
+      <button class="nav-button active" data-view="feed">🏠 Feed principal</button>
+      <button class="nav-button" data-filter="verified">🛡️ Informações verificadas</button>
+      <button class="nav-button" data-filter="rumor">⚠️ Boatos</button>
+      <button class="nav-button" data-view="curiosities">🧠 Curiosidades</button>
+      <button class="nav-button" data-view="quiz">🌪️ Quiz de tornado</button>
+      <button class="nav-button" id="safetyLeft">🚨 Guia de segurança</button>
+
+      <div class="section-title">Perfis em destaque</div>
+      <div id="featuredUsers"></div>
+      <button class="full-button" id="countUsers">👥 Ver usuários</button>
+    </section>
+  </aside>
+
+  <main>
+    <section class="disclaimer">
+      <strong>⚠️ CENÁRIO FICTÍCIO — SIMULAÇÃO DE DESASTRES NATURAIS</strong>
+      <p>Os perfis, horários, relatos e acontecimentos da rede são fictícios e foram criados para um trabalho escolar. Este site não emite alertas reais.</p>
+    </section>
+
+    <!-- FEED -->
+    <section class="view active" id="feedView">
+      <section class="panel composer">
+        <img id="composerAvatar" src="" alt="Sua foto de perfil">
+        <div class="composer-content">
+          <textarea id="draft" maxlength="280" placeholder="O que você quer compartilhar?"></textarea>
+          <div class="composer-footer">
+            <small style="color:var(--muted)">Até 280 caracteres</small>
+            <button class="primary" id="publish">Publicar ↗</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="filters">
+        <button class="filter active" data-filter="all">✨ Para você</button>
+        <button class="filter" data-filter="recent">🕒 Recentes</button>
+        <button class="filter" data-filter="verified">🛡️ Verificadas</button>
+        <button class="filter" data-filter="rumor">⚠️ Não verificadas</button>
+      </div>
+
+      <section id="feed" aria-live="polite"></section>
+      <div style="text-align:center;margin:18px 0">
+        <button id="advance">⏱️ Avançar a história</button>
+      </div>
+    </section>
+
+    <!-- CURIOSIDADES -->
+    <section class="view" id="curiositiesView">
+      <h1 class="view-title">🧠 Curiosidades naturais</h1>
+      <p class="view-description">Aprenda fatos científicos sobre terremotos e tornados. Essas informações ajudam a entender os fenômenos e a agir com mais segurança.</p>
+
+      <article class="fact-card">
+        <div class="fact-icon">🌪️</div>
+        <h3>O que é um tornado?</h3>
+        <p>É uma coluna de ar em rotação intensa que se estende de uma tempestade até o solo. Nem toda tempestade forma um tornado.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">⛈️</div>
+        <h3>Como um tornado se forma?</h3>
+        <p>Tornados podem se formar em tempestades fortes quando as condições atmosféricas favorecem a rotação do ar. A formação é complexa e nem toda tempestade rotativa gera um tornado.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">📏</div>
+        <h3>Como a força é classificada?</h3>
+        <p>A escala Fujita Aprimorada (EF) classifica tornados de EF0 a EF5 usando os danos observados para estimar a intensidade dos ventos. Não é uma medição direta de cada vento durante o evento.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">🌎</div>
+        <h3>Terremotos acontecem no céu?</h3>
+        <p>Não. Terremotos são vibrações do solo causadas pela liberação de energia na Terra. Tornados são fenômenos atmosféricos associados a tempestades.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">🧭</div>
+        <h3>É possível prever exatamente um tornado?</h3>
+        <p>Previsões meteorológicas podem identificar condições favoráveis e alertas podem ser emitidos quando há risco ou confirmação. Ainda assim, nem sempre é possível saber com muita antecedência onde exatamente um tornado vai tocar o solo.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">🏠</div>
+        <h3>Onde se proteger de um tornado?</h3>
+        <p>Procure um abrigo resistente, de preferência um porão ou um cômodo interno no andar mais baixo, longe de janelas. Proteja a cabeça e siga as orientações das autoridades locais.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">🌊</div>
+        <h3>O que é uma tromba d'água?</h3>
+        <p>É uma coluna de ar em rotação associada a uma nuvem, observada sobre a água. Algumas podem se deslocar para terra, mas não são todas iguais em intensidade e comportamento.</p>
+      </article>
+
+      <article class="fact-card">
+        <div class="fact-icon">🔬</div>
+        <h3>Curiosidade sobre terremotos</h3>
+        <p>O hipocentro é o ponto no interior da Terra onde começa a ruptura. O epicentro é o ponto na superfície diretamente acima dele.</p>
+      </article>
+
+      <button class="primary" id="goQuiz">🌪️ Agora, testar meus conhecimentos!</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="view" id="quizView">
+      <h1 class="view-title">🌪️ Quiz: você entende de tornados?</h1>
+      <p class="view-description">Responda às perguntas e veja quantos pontos consegue fazer. São 8 perguntas educativas.</p>
+
+      <section class="panel" id="quizPanel">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <span id="questionNumber">Pergunta 1 de 8</span>
+          <span class="quiz-score" id="quizScore">Pontos: 0</span>
+        </div>
+        <div class="progress"><div id="quizProgress"></div></div>
+        <p class="quiz-question" id="questionText"></p>
+        <div id="options"></div>
+        <div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>
+        <button class="primary" id="nextQuestion" style="display:none;margin-top:12px">Próxima pergunta →</button>
+      </section>
+    </section>
+  </main>
+
+  <!-- COLUNA DIREITA -->
+  <aside class="right-sidebar sidebar">
+    <section class="panel">
+      <h3 style="margin-top:0">📈 Assuntos do momento</h3>
+      <div class="trend"><b>#Tremor</b><small>Relatos da simulação</small></div>
+      <div class="trend"><b>#Tornados</b><small>Curiosidades meteorológicas</small></div>
+      <div class="trend"><b>#FatoOuFake</b><small>Confira antes de repostar</small></div>
+      <div class="trend"><b>#Segurança</b><small>Orientações preventivas</small></div>
+    </section>
+
+    <section class="panel">
+      <h3 style="margin-top:0">🧠 Minuto da ciência</h3>
+      <small id="stageTitle" style="color:var(--yellow);font-weight:bold">ETAPA 1 DE 4</small>
+      <div class="progress"><div id="progressBar"></div></div>
+      <p class="education" id="scienceFact">Epicentro é o ponto na superfície acima do hipocentro.</p>
+      <button class="full-button" id="nextFact">Outra curiosidade</button>
+    </section>
+
+    <section class="panel">
+      <h3 style="margin-top:0">🛡️ Lembrete de segurança</h3>
+      <p class="education">Durante um terremoto, proteja a cabeça e o pescoço. Durante um alerta de tornado, procure um abrigo resistente, longe das janelas.</p>
+      <button class="full-button" id="safetyRight">Guia completo</button>
+    </section>
+  </aside>
+</div>
+
+<footer>
+  TREMOR · Projeto escolar interativo · Perfis e acontecimentos fictícios
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- GUIA DE SEGURANÇA -->
+<div class="modal-backdrop" id="safetyModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="safetyTitle">
+  <section class="modal">
+    <h2 id="safetyTitle">🚨 Guia de segurança</h2>
+    <h3>🌎 Durante um terremoto</h3>
+    <p>Abaixe-se, proteja a cabeça e o pescoço e, se possível, abrigue-se sob uma mesa resistente. Afaste-se das janelas e de objetos que possam cair. Não use elevadores.</p>
+    <h3>🌪️ Durante um alerta de tornado</h3>
+    <p>Procure um porão ou um cômodo interno no andar mais baixo de um edifício resistente, longe de janelas. Proteja a cabeça e siga os alertas das autoridades.</p>
+    <h3>📢 Informação responsável</h3>
+    <p>Confirme avisos em canais oficiais. Não compartilhe boatos como fatos e não se aproxime de áreas danificadas.</p>
+    <p style="font-size:11px;color:var(--muted)">Estas são orientações educativas gerais. Em uma emergência real, siga as instruções das autoridades locais.</p>
+    <div class="modal-actions"><button class="primary" id="closeSafety">Entendi</button></div>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+/* =========================================
+   PERFIS DA REDE SOCIAL
+========================================= */
+
+const users = [
+  {name:"Luiza Santos",handle:"@luiza_07",image:"https://i.pinimg.com/236x/ac/71/c3/ac71c3762646ec599fe03e45bbfc90fa.jpg",role:"Estudante"},
+  {name:"Natsuki",handle:"@natsu_online",image:"https://i.pinimg.com/originals/9d/63/ef/9d63ef60e34a1d38775b53bb556f37bb.png",role:"Usuária"},
+  {name:"Antony Starr",handle:"@capitao_patria",image:"https://ovicio.com.br/wp-content/uploads/2025/08/20250813-antony-starr-e-capitao-patria-em-the-boys-555x555.webp",role:"Usuário"},
+  {name:"Pedro Gamer",handle:"@pedro_gamer",image:"https://i.pinimg.com/236x/ca/03/73/ca0373f7dee4e0f4860d3a888e5b9816.jpg",role:"Gamer"},
+  {name:"Pixel",handle:"@pixelplay",image:"https://play-lh.googleusercontent.com/7Xx-o2mH_9s7GJbQTwLQsr2XwsSouCDJtF_lAqJaAbqDNcU9ZrvGhDmTJ-lDrMYsBTJu6lU_RBjshatcZyKF=w240-h480-rw",role:"Criador"},
+  {name:"MagmaPocket",handle:"@magmapocket",image:"https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba",role:"Artista"},
+  {name:"Rafa",handle:"@rafa_real",image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRb51ejDuyLDaRxrS0JtMe82jVPufdGVu0yHYHXCWEVgg&s",role:"Morador"},
+  {name:"Dani",handle:"@dani_post",image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP2MAu50NLw8ijIbiCFMckSgKXELP7WsMGFiKxjDsG4Q&s",role:"Usuária"},
+  {name:"Dra. Marina",handle:"@dra_marina",image:"https://img.magnific.com/fotos-gratis/medica-no-hospital-com-estetoscopio_23-2148827774.jpg?semt=ais_hybrid&w=740&q=80",role:"Médica"},
+  {name:"David Cross",handle:"@davidcross",image:"https://upload.wikimedia.org/wikipedia/commons/f/fd/DavidCross2007.jpg",role:"Comentarista"},
+  {name:"Sombra",handle:"@sombra_urbana",image:"https://img.magnific.com/vetores-gratis/personagem-misterioso-gangster_23-2148466806.jpg?semt=ais_hybrid&w=740&q=80",role:"Usuário"},
+  {name:"Anon",handle:"@anon_404",image:"https://i.redd.it/bdmnlduykfod1.png",role:"Conta anônima"},
+  {name:"Vingador123",handle:"@Vingador123",image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbuG1MEcQxHTx5_PgIrf4fDov6zQBiVCv_HXkDysBy-g&s=10",role:"Usuário"},
+  {name:"KV",handle:"@KV",image:"https://i.pinimg.com/736x/68/03/cd/6803cd3bf5bf82398477cee5b22a68c4.jpg",role:"Investigadora"},
+  {name:"Angelino25",handle:"@Angelino25",image:"https://i.pinimg.com/originals/3b/5a/83/3b5a83015def8bc4559c7490d58ed478.jpg",role:"Morador"},
+  {name:"MarceloFerreira",handle:"@MarceloFerreira",image:"https://images.steamusercontent.com/ugc/954094572048710952/F3150C56E08A33A090AD50536C1F0A31979B1C24/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",role:"Repórter cidadão"},
+  {name:"@familiacadevcs",handle:"@familiacadevcs",image:"https://i.pinimg.com/474x/8f/9a/1b/8f9a1b4f4e611d2d9d7029f7261aefc3.jpg",role:"Familiar preocupado"},
+  {name:"20comer70correr",handle:"@20comer70correr",image:"https://i.pinimg.com/736x/04/ec/f2/04ecf20035482b23a0c12fca78b7bb92.jpg",role:"Entusiasta de ciência"},
+
+  /* 13 NOVOS PERFIS */
+  {name:"NinaTempestade",handle:"@ninatempestade",image:"https://i.pinimg.com/736x/d7/0e/53/d70e53f816b05eb8aa6b35751866f348.jpg",role:"Estudante"},
+  {name:"CaioClima",handle:"@caioclima",image:"https://i.pinimg.com/736x/91/fc/f8/91fcf85aacb3ea1b5df04cd7935e2b51.jpg",role:"Entusiasta do clima"},
+  {name:"MikaStorm",handle:"@mikastorm",image:"https://i.pinimg.com/736x/e4/a8/7e/e4a87e98d254e6a8bb2a2e28454ea12c.jpg",role:"Fotógrafa"},
+  {name:"RafaRadar",handle:"@rafaradar",image:"https://i.pinimg.com/736x/db/a2/4a/dba24a44dc2f3f43a299f9dfaedb86a6.jpg",role:"Curioso por meteorologia"},
+  {name:"LunaAzul",handle:"@lunaazul",image:"https://i.pinimg.com/736x/38/30/1e/38301e2ce416cd15dea48b2aa00315a5.jpg",role:"Estudante"},
+  {name:"TheoNuvem",handle:"@theonuvem",image:"https://i.pinimg.com/1200x/c3/bf/00/c3bf00d616ce9f0613bec4068f63272a.jpg",role:"Morador"},
+  {name:"BiaRelâmpago",handle:"@biarelampago",image:"https://i.pinimg.com/736x/59/8d/de/598ddec813d58341905bc8ee380810f7.jpg",role:"Criadora de conteúdo"},
+  {name:"EnzoFrenteFria",handle:"@enzofrente",image:"https://i.pinimg.com/736x/0b/79/c8/0b79c89f39c09ad9c35f686959f2b3a0.jpg",role:"Estudante"},
+  {name:"YumiCéu",handle:"@yumiceu",image:"https://i.pinimg.com/736x/30/4a/87/304a87b0b3516c243ed96085ae839931.jpg",role:"Usuária"},
+  {name:"DuduAlerta",handle:"@dudualerta",image:"https://i.pinimg.com/736x/cf/89/24/cf89245377200a0a4ccd5865109af9d1.jpg",role:"Voluntário fictício"},
+  {name:"MaluNorte",handle:"@malunorte",image:"https://i.pinimg.com/1200x/2e/a7/9d/2ea79d2706e440650a81247e2767d333.jpg",role:"Estudante"},
+  {name:"ViniCumulus",handle:"@vinicumulus",image:"https://i.pinimg.com/736x/7f/1b/72/7f1b72a0c6ae4cce014c2853cef3f7da.jpg",role:"Fã de ciência"},
+  {name:"TatiObserva",handle:"@tatiobserva",image:"https://i.pinimg.com/736x/7f/1b/72/7f1b72a0c6ae4cce014c2853cef3f7da.jpg",role:"Observadora do clima"},
+  {name:"Jasmin",handle:"@jasmin",image:"https://i.pinimg.com/736x/70/dc/5c/70dc5c760c71b0a358169204ac410633.jpg",role:"Participante"},
+  {name:"Cavalo do chico",handle:"@cavalodochico",image:"https://i.pinimg.com/736x/c8/c3/93/c8c393403a74aaa94d5e2c2a9c78f98c.jpg",role:"Participante"},
+  {name:"Tony",handle:"@tony",image:"https://i.pinimg.com/736x/ac/36/1c/ac361cff35341a416002d096bc48dad6.jpg",role:"Participante"},
+  {name:"pump",handle:"@pump",image:"https://i.pinimg.com/1200x/e4/31/d7/e431d768bb5b20eaa901953301bd2911.jpg",role:"Participante"},
+  {name:"Lorenzato",handle:"@lorenzato",image:"https://i.pinimg.com/736x/56/56/27/5656273bc85766dfd5db954e2be3ca0b.jpg",role:"Participante"},
+  {name:"GEMAPLYS",handle:"@gemaplys",image:"https://i.pinimg.com/736x/df/e7/8d/dfe78dbd72d6517b68e9374fdbf79402.jpg",role:"Participante"},
+  {name:"Tung Tung Sahur Lover",handle:"@tungtungsahurlover",image:"https://i.pinimg.com/736x/55/53/c3/5553c3b5f814ac5c7a7271d7e2e25703.jpg",role:"Participante"},
+  {name:"Yan CM",handle:"@yan_cm",image:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTEm4L9DZW17vQSUJmUyhIqtfDZ6gr1axrSkf5aNlx61McxkGvfYI92lM3laGDvhG2Vdk9ZSKAGh2Vl6ipVOXPwAT-2f3eZ3lUQfgVIzWXbEyZg2h-eTSXF4Vnxk8oArTQARZiGXTqmKt8waq2WYTo-aG0UQ2GxeQGXqCfja3ZgjgiY2OIfihkvH63osS7/s1600/fff.png",role:"Desenvolvedor"}
+];
+
+/* =========================================
+   PUBLICAÇÕES INICIAIS
+========================================= */
+
+const initialPosts = [
+  {id:1,user:0,time:"14:32",text:"Gente, vocês sentiram a mesa balançar agora? Achei que era impressão minha 😰",likes:24,comments:["Aqui também tremeu um pouco!","Vamos esperar informações confiáveis."],type:"normal"},
+  {id:2,user:3,time:"14:33",text:"MANO, meu controle caiu da mesa KKKK pera, isso foi um tremor mesmo??",likes:51,comments:["Meu copo também mexeu.","Fica longe das janelas por precaução."],type:"normal"},
+  {id:3,user:12,time:"14:34",text:"VI NUM GRUPO QUE FOI MAGNITUDE 9,9 E QUE VAI TER OUTRO MAIOR!!!",likes:8,comments:["Tem fonte confiável?","Não compartilhem sem confirmação."],type:"rumor"},
+  {id:4,user:13,time:"14:35",text:"Calma, pessoal. Epicentro é o ponto na superfície acima do hipocentro. A magnitude precisa ser confirmada por uma fonte técnica.",likes:72,comments:["Valeu por explicar!","Informação útil."],type:"verified"},
+  {id:5,user:16,time:"14:36",text:"Estou tentando falar com minha família. As mensagens demoram para enviar. Vamos manter a calma e evitar espalhar rumores.",likes:34,comments:["Espero que todos estejam bem ❤️"],type:"normal"},
+  {id:6,user:8,time:"14:37",text:"Se alguém estiver em um prédio durante o tremor: abaixe-se, proteja a cabeça e o pescoço e, se possível, abrigue-se sob uma mesa resistente. Afaste-se das janelas.",likes:109,comments:["Compartilhando para ajudar."],type:"verified"},
+  {id:7,user:15,time:"14:38",text:"Tem sirenes ao longe, mas ainda não sei o motivo. Não vou afirmar nada até ter uma informação confirmada.",likes:46,comments:["Boa, melhor não espalhar rumor."],type:"verified"},
+  {id:8,user:14,time:"14:39",text:"Oi, gente! Sou Angelino25. Vamos conferir as informações antes de compartilhar qualquer alerta. Boato pode deixar todo mundo mais confuso.",likes:38,comments:["Boa, Angelino!"],type:"normal"},
+  {id:9,user:2,time:"14:40",text:"A rede inteira está falando disso. Alguém sabe como os cientistas medem o tamanho de um terremoto?",likes:19,comments:["A magnitude é estimada usando dados de ondas sísmicas."],type:"normal"},
+  {id:10,user:17,time:"14:41",text:"Curiosidade: réplicas são terremotos que podem acontecer após o evento principal. Sigam as orientações oficiais.",likes:95,comments:["A parte científica do feed salvando o dia."],type:"verified"},
+  {id:11,user:10,time:"14:42",text:"URGENTE: todo mundo precisa sair correndo AGORA!! (não tenho fonte, mas me falaram)",likes:3,comments:["Não compartilhe instruções alarmistas sem fonte.","Siga os avisos das autoridades."],type:"rumor"},
+  {id:12,user:5,time:"14:43",text:"A timeline virou uma mistura de medo e informação. Confiram as fontes antes de repostar, galera.",likes:63,comments:["Falou tudo."],type:"normal"},
+  {id:13,user:18,time:"14:44",text:"Eu estava pesquisando nuvens de tempestade para a escola. Nuvens muito altas podem estar associadas a tempestades fortes, mas não significam que um tornado vai acontecer.",likes:26,comments:["Boa explicação!"],type:"verified"},
+  {id:14,user:19,time:"14:45",text:"Se aparecer um alerta meteorológico, leiam a mensagem completa e procurem os canais oficiais. Não confiem só em um print sem contexto.",likes:33,comments:["Vou prestar atenção nisso."],type:"verified"},
+  {id:15,user:20,time:"14:46",text:"Pergunta: um tornado e um terremoto são a mesma coisa? Não! Um é um fenômeno atmosférico e o outro envolve movimentos e rupturas na Terra.",likes:42,comments:["Essa diferença cai na prova KKKK"],type:"verified"},
+  {id:16,user:21,time:"14:47",text:"Gente, achei que toda tempestade formava tornado, mas não é assim. É um fenômeno que depende de várias condições.",likes:19,comments:["Também aprendi isso hoje."],type:"normal"},
+  {id:17,user:22,time:"14:48",text:"Uma dica de segurança: se houver alerta de tornado, não fique perto de janelas para tentar filmar. Procure abrigo e siga as orientações locais.",likes:67,comments:["Segurança em primeiro lugar."],type:"verified"},
+  {id:18,user:23,time:"14:49",text:"Minha professora falou sobre a escala EF. Ela usa os danos observados para estimar a intensidade de um tornado.",likes:35,comments:["Boa curiosidade para o trabalho!"],type:"verified"},
+  {id:19,user:24,time:"14:50",text:"Estou anotando curiosidades para o quiz da escola. Vocês sabiam que nem toda nuvem em rotação vira um tornado?",likes:27,comments:["Não sabia!"],type:"normal"},
+  {id:20,user:25,time:"14:51",text:"O mais importante em uma emergência é procurar informações confiáveis e não espalhar pânico.",likes:41,comments:["Concordo!"],type:"verified"},
+  {id:21,user:26,time:"14:52",text:"A previsão pode indicar condições favoráveis para tempestades, mas isso não quer dizer que um tornado vá tocar o solo com certeza.",likes:28,comments:["Boa diferença entre risco e certeza."],type:"verified"},
+  {id:22,user:27,time:"14:53",text:"Já fiz o quiz de tornado e errei uma pergunta KKKK. Pelo menos aprendi mais sobre segurança.",likes:17,comments:["Vou tentar também!"],type:"normal"},
+  {id:23,user:28,time:"14:54",text:"Não compartilhem vídeos antigos como se fossem de hoje. Confiram data, local e fonte antes de repostar.",likes:51,comments:["Isso acontece muito."],type:"verified"},
+  {id:24,user:29,time:"14:55",text:"Se um alerta de tornado for emitido, procure um abrigo resistente no andar mais baixo possível e fique longe das janelas.",likes:82,comments:["Informação importante."],type:"verified"},
+  {id:25,user:30,time:"14:56",text:"Aprender ciência também é aprender a diferenciar um fato de um boato. É isso que estamos fazendo nesse projeto!",likes:39,comments:["Trabalho escolar nota 10 XD"],type:"normal"}
+];
+
+const storyStages = [
+  {
+    title:"ETAPA 1 DE 4 · PRIMEIROS RELATOS",
+    fact:"<strong>Epicentro:</strong> ponto na superfície diretamente acima do hipocentro, onde começa o terremoto no interior da Terra.",
+    post:{user:1,time:"14:57",text:"Alguém mais está recebendo mensagens de amigos? Vamos manter as informações organizadas e checar antes de compartilhar.",likes:22,comments:["Sim, estou avisando para manterem a calma."],type:"normal"}
+  },
+  {
+    title:"ETAPA 2 DE 4 · BOATOS SE ESPALHAM",
+    fact:"<strong>Magnitude:</strong> estima o tamanho do terremoto. Intensidade descreve como o tremor é sentido e os efeitos em um lugar.",
+    post:{user:12,time:"14:58",text:"Apaguei o post anterior: eu não tinha fonte para aquela magnitude. Desculpa, pessoal. Vou esperar um comunicado confiável.",likes:47,comments:["Reconhecer o erro ajuda a impedir desinformação."],type:"verified"}
+  },
+  {
+    title:"ETAPA 3 DE 4 · COMUNIDADE SE ORGANIZA",
+    fact:"<strong>Réplicas:</strong> tremores que podem acontecer após o evento principal. Tenha cuidado em áreas danificadas e siga orientações oficiais.",
+    post:{user:13,time:"14:59",text:"Lembrete: não entre em edifícios danificados após um terremoto. Acompanhem os comunicados oficiais.",likes:132,comments:["Informação importante."],type:"verified"}
+  },
+  {
+    title:"ETAPA 4 DE 4 · INFORMAÇÃO RESPONSÁVEL",
+    fact:"<strong>Tornados:</strong> são colunas de ar em rotação intensa que se estendem de uma tempestade até o solo. Nem toda tempestade produz um tornado.",
+    post:{user:17,time:"15:00",text:"A gente pode ajudar compartilhando informações verificadas, cuidando uns dos outros e seguindo as orientações oficiais.",likes:188,comments:["Responsabilidade também é ajuda. ❤️"],type:"verified"}
+  }
+];
+
+const scienceFacts = [
+  "<strong>Hipocentro:</strong> é o ponto no interior da Terra onde começa a ruptura que gera o terremoto.",
+  "<strong>Tornado:</strong> coluna de ar em rotação intensa que se estende de uma tempestade até o solo.",
+  "<strong>Escala EF:</strong> classifica tornados de EF0 a EF5 usando danos observados para estimar a intensidade dos ventos.",
+  "<strong>Previsão:</strong> meteorologistas podem prever condições favoráveis, mas não garantir com precisão cada tornado.",
+  "<strong>Ondas sísmicas:</strong> transportam energia liberada por um terremoto através da Terra.",
+  "<strong>Segurança:</strong> em um alerta de tornado, procure abrigo resistente, longe das janelas."
+];
+
+/* =========================================
+   QUIZ DE TORNADOS
+========================================= */
+
+const quizQuestions = [
+  {
+    question:"1. O que é um tornado?",
+    options:["Um terremoto que acontece no céu","Uma coluna de ar em rotação que chega até o solo","Uma onda gigante do oceano","Uma nuvem de neve"],
+    answer:1,
+    explanation:"Um tornado é uma coluna de ar em rotação intensa que se estende de uma tempestade até o solo."
+  },
+  {
+    question:"2. Qual destas opções é um local mais seguro durante um alerta de tornado?",
+    options:["Perto de uma janela para observar","Dentro de um carro parado ao ar livre","Um cômodo interno no andar mais baixo de um edifício resistente","Debaixo de uma árvore"],
+    answer:2,
+    explanation:"Procure um abrigo resistente no andar mais baixo, de preferência um cômodo interno e longe de janelas."
+  },
+  {
+    question:"3. Toda tempestade forte produz um tornado?",
+    options:["Sim, sempre","Não, só algumas condições podem gerar tornados","Sim, mas apenas à noite","Não, porque tornados não têm relação com tempestades"],
+    answer:1,
+    explanation:"Nem toda tempestade produz tornado. A formação depende de uma combinação de condições atmosféricas."
+  },
+  {
+    question:"4. Para que serve a escala Fujita Aprimorada (EF)?",
+    options:["Para medir terremotos","Para contar nuvens","Para classificar tornados a partir dos danos observados","Para medir a temperatura do oceano"],
+    answer:2,
+    explanation:"A escala EF usa os danos observados para estimar a intensidade dos ventos de um tornado."
+  },
+  {
+    question:"5. Um tornado e um terremoto são o mesmo fenômeno?",
+    options:["Sim, são nomes diferentes para a mesma coisa","Não, um é atmosférico e o outro envolve a Terra sólida","Sim, os dois só ocorrem no oceano","Não, mas os dois são tipos de chuva"],
+    answer:1,
+    explanation:"Tornados são fenômenos atmosféricos. Terremotos são vibrações do solo causadas pela liberação de energia na Terra."
+  },
+  {
+    question:"6. O que você deve fazer ao receber um alerta de tornado?",
+    options:["Compartilhar o alerta sem ler","Ir para perto das janelas para filmar","Procurar abrigo e acompanhar as orientações oficiais","Ignorar todos os avisos"],
+    answer:2,
+    explanation:"Procure abrigo imediatamente e acompanhe as orientações das autoridades locais."
+  },
+  {
+    question:"7. O que significa publicar uma informação sem fonte confiável?",
+    options:["Que ela é automaticamente verdadeira","Que ela precisa ser verificada antes de ser tratada como fato","Que ela é sempre falsa","Que ela deve ser compartilhada rapidamente"],
+    answer:1,
+    explanation:"Informações sem fonte precisam ser verificadas. Não espalhe rumores como se fossem fatos."
+  },
+  {
+    question:"8. É possível saber com certeza o local exato de todo tornado com muita antecedência?",
+    options:["Sim, sempre","Não. Previsões podem identificar condições favoráveis, mas há incertezas","Sim, basta olhar para as nuvens","Não, porque meteorologistas não estudam tempestades"],
+    answer:1,
+    explanation:"A meteorologia pode identificar condições favoráveis e emitir alertas, mas há incertezas sobre onde exatamente um tornado vai tocar o solo."
+  }
+];
+
+let quizIndex=0;
+let quizScore=0;
+let quizAnswered=false;
+
+function startQuiz(){
+  quizIndex=0;
+  quizScore=0;
+  quizAnswered=false;
+  renderQuizQuestion();
+  showView("quiz");
+}
+
+function renderQuizQuestion(){
+  const q=quizQuestions[quizIndex];
+  document.getElementById("questionNumber").textContent=`Pergunta ${quizIndex+1} de ${quizQuestions.length}`;
+  document.getElementById("quizScore").textContent=`Pontos: ${quizScore}`;
+  document.getElementById("quizProgress").style.width=`${(quizIndex/quizQuestions.length)*100}%`;
+  document.getElementById("questionText").textContent=q.question;
+  document.getElementById("quizFeedback").textContent="";
+  document.getElementById("nextQuestion").style.display="none";
+  document.getElementById("nextQuestion").textContent=
+    quizIndex===quizQuestions.length-1?"Ver resultado 🏁":"Próxima pergunta →";
+
+  const options=document.getElementById("options");
+  options.innerHTML="";
+
+  q.options.forEach((option,index)=>{
+    const button=document.createElement("button");
+    button.className="quiz-option";
+    button.textContent=String.fromCharCode(65+index)+") "+option;
+    button.addEventListener("click",()=>answerQuestion(index,button));
+    options.appendChild(button);
+  });
+
+  quizAnswered=false;
+}
+
+function answerQuestion(selected,selectedButton){
+  if(quizAnswered)return;
+  quizAnswered=true;
+
+  const q=quizQuestions[quizIndex];
+  const buttons=[...document.querySelectorAll(".quiz-option")];
+
+  buttons.forEach((button,index)=>{
+    button.disabled=true;
+    if(index===q.answer)button.classList.add("correct");
+  });
+
+  if(selected===q.answer){
+    quizScore++;
+    selectedButton.classList.add("correct");
+    document.getElementById("quizFeedback").innerHTML=
+      "✅ <strong>Resposta correta!</strong> "+q.explanation;
+  }else{
+    selectedButton.classList.add("wrong");
+    document.getElementById("quizFeedback").innerHTML=
+      "❌ <strong>Quase!</strong> "+q.explanation;
+  }
+
+  document.getElementById("quizScore").textContent=`Pontos: ${quizScore}`;
+  document.getElementById("quizProgress").style.width=`${((quizIndex+1)/quizQuestions.length)*100}%`;
+  document.getElementById("nextQuestion").style.display="inline-block";
+}
+
+function showQuizResult(){
+  const percentage=Math.round((quizScore/quizQuestions.length)*100);
+  let message="Continue estudando! Agora você já conhece mais sobre tornados.";
+  if(quizScore>=7)message="Incrível! Você demonstrou ótimo conhecimento sobre tornados e segurança!";
+  else if(quizScore>=5)message="Muito bem! Você já aprendeu bastante sobre tornados.";
+  document.getElementById("quizPanel").innerHTML=`
+    <div style="text-align:center;padding:20px 5px">
+      <div style="font-size:48px">🌪️</div>
+      <h2>Quiz concluído!</h2>
+      <p class="quiz-score" style="font-size:24px">${quizScore} / ${quizQuestions.length}</p>
+      <p>${percentage}% de acertos</p>
+      <p class="education">${message}</p>
+      <button class="primary" id="restartQuiz">Tentar novamente ↻</button>
+    </div>`;
+  document.getElementById("restartQuiz").addEventListener("click",()=>{
+    document.getElementById("quizPanel").innerHTML=`
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <span id="questionNumber"></span>
+        <span class="quiz-score" id="quizScore"></span>
+      </div>
+      <div class="progress"><div id="quizProgress"></div></div>
+      <p class="quiz-question" id="questionText"></p>
+      <div id="options"></div>
+      <div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>
+      <button class="primary" id="nextQuestion" style="display:none;margin-top:12px">Próxima pergunta →</button>`;
+    document.getElementById("nextQuestion").addEventListener("click",nextQuizQuestion);
+    startQuiz();
+  });
+}
+
+function nextQuizQuestion(){
+  if(!quizAnswered)return;
+  if(quizIndex===quizQuestions.length-1){
+    showQuizResult();
+    return;
+  }
+  quizIndex++;
+  renderQuizQuestion();
+}
+
+document.getElementById("nextQuestion").addEventListener("click",nextQuizQuestion);
+document.getElementById("goQuiz").addEventListener("click",startQuiz);
+
+/* =========================================
+   ESTADO DO SITE
+========================================= */
+
+let posts=initialPosts.map(post=>({...post,comments:[...post.comments]}));
+let selectedFilter="all";
+let nextPostId=100;
+/* =========================================
+   CONTEÚDO EXTRA DA HISTÓRIA: 267 PUBLICAÇÕES
+   Gerado como conteúdo fictício para a simulação.
+========================================= */
+const extraStoryTexts = [
+  "MANO KKKKK, a TREMOR virou central de investigação agora. Vamos com calma e sem espalhar boato XD",
+  "Alguém tem uma fonte confiável sobre o que aconteceu? Melhor confirmar antes de repostar.",
+  "Atualização: ainda estamos organizando os relatos. Se cuidem e sigam as orientações oficiais.",
+  "Gente, vídeo sem data e localização não confirma nada. Vamos checar direitinho.",
+  "Eu entrei aqui pra entender o que rolou e saí aprendendo sobre ondas sísmicas KKKK.",
+  "Se estiverem sentindo tremores, afastem-se de objetos que possam cair e procurem orientações locais.",
+  "Mais um relato chegou, mas ainda não dá pra concluir a causa. Informação responsável primeiro!",
+  "A timeline tá movimentada demais KKKKK. Respirem, confiram as fontes e cuidem uns dos outros.",
+  "Não compartilhem localização pessoal nem dados de quem está pedindo ajuda. Segurança em primeiro lugar.",
+  "Boato não vira verdade só porque muita gente compartilhou. Vamos esperar confirmação."
+];
+const extraStoryUsers = [31,32,33,34,35,36,37,38,1,3,5,8,13,18,24,30];
+for(let extraIndex=0;extraIndex<267;extraIndex++){
+  const userIndex=extraStoryUsers[extraIndex%extraStoryUsers.length];
+  const baseText=extraStoryTexts[extraIndex%extraStoryTexts.length];
+  posts.push({
+    id:nextPostId++,
+    user:userIndex,
+    time:`15:${String(Math.floor(extraIndex/60)%60).padStart(2,"0")}`,
+    text:extraIndex===266
+      ?"Yan CM (desenvolvedor): MANO KKKKK, 267 posts depois e a história continua! Fiz isso pra deixar a TREMOR mais viva, mas lembrem: é tudo uma simulação fictícia XD"
+      :`${baseText}${extraIndex%7===0?" (relato fictício da história da TREMOR)":""}`,
+    likes:(extraIndex*7+13)%126,
+    comments:extraIndex%4===0?["Vamos confirmar antes de compartilhar.","Boa, informação responsável!"]:[],
+    type:extraIndex%9===0?"verified":"normal"
+  });
+}
+let storyIndex=0;
+let factIndex=0;
+let notificationCount=3;
+let currentUser=null;
+let currentUserIndex=null;
+const likedPostIds=new Set();
+
+const feed=document.getElementById("feed");
+const draft=document.getElementById("draft");
+const toast=document.getElementById("toast");
+const safetyModal=document.getElementById("safetyModal");
+
+function escapeText(value){
+  return String(value).replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[char]);
+}
+
+function showToast(message){
+  toast.textContent=message;
+  toast.classList.add("visible");
+  clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>toast.classList.remove("visible"),2700);
+}
+
+function safeImageUrl(url){
+  try{
+    const parsed=new URL(url);
+    return parsed.protocol==="https:"||parsed.protocol==="http:"?parsed.href:"";
+  }catch{
+    return "";
+  }
+}
+
+function avatar(user,className="avatar"){
+  const url=safeImageUrl(user.image)||"";
+  const fallback="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22%3E%3Crect width=%2280%22 height=%2280%22 rx=%2240%22 fill=%22%232d405b%22/%3E%3Ctext x=%2250%25%22 y=%2258%25%22 font-size=%2235%22 text-anchor=%22middle%22 fill=%22white%22%3E?%3C/text%3E%3C/svg%3E";
+  return `<img class="${className}" src="${escapeText(url||fallback)}" alt="Foto de ${escapeText(user.name)}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'">`;
+}
+
+/* =========================================
+   ESCOLHA DE NOME E FOTO
+========================================= */
+
+const usernameInput=document.getElementById("usernameInput");
+const photoInput=document.getElementById("photoInput");
+const previewName=document.getElementById("previewName");
+const profilePreview=document.getElementById("profilePreview");
+
+usernameInput.addEventListener("input",()=>{
+  previewName.textContent=usernameInput.value.trim()||"Seu nome aparecerá aqui";
+});
+
+photoInput.addEventListener("input",()=>{
+  const url=safeImageUrl(photoInput.value.trim());
+  if(url)profilePreview.src=url;
+});
+
+profilePreview.addEventListener("error",()=>{
+  profilePreview.src="https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba";
+});
+
+document.getElementById("profileForm").addEventListener("submit",event=>{
+  event.preventDefault();
+
+  const name=usernameInput.value.trim().replace(/^@+/,"");
+  if(!name){
+    showToast("Escolha um nome de usuário.");
+    return;
+  }
+
+  const enteredUrl=photoInput.value.trim();
+  const image=enteredUrl?safeImageUrl(enteredUrl):"https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba";
+
+  if(enteredUrl&&!image){
+    showToast("Esse link não parece ser válido. Confira o endereço.");
+    return;
+  }
+
+  currentUser={
+    name,
+    handle:"@"+name.replace(/\s+/g,""),
+    image,
+    role:"Participante"
+  };
+
+  users.push(currentUser);
+  currentUserIndex=users.length-1;
+  document.getElementById("composerAvatar").src=image;
+  document.getElementById("profileModal").style.display="none";
+  renderFeaturedUsers();
+  renderFeed();
+  showToast("Bem-vindo(a) à TREMOR, "+name+"!");
+});
+
+/* =========================================
+   PERFIS EM DESTAQUE E PUBLICAÇÕES
+========================================= */
+
+function renderFeaturedUsers(){
+  const indices=[0,8,14,18,20,25];
+  document.getElementById("featuredUsers").innerHTML=indices.map(index=>{
+    const user=users[index];
+    return `<div class="person">${avatar(user,"")}<div><strong>${escapeText(user.name)}</strong><small>${escapeText(user.handle)}</small></div></div>`;
+  }).join("");
+}
+
+function badge(type){
+  if(type==="verified")return '<span class="badge verified">✓ EDUCATIVO / VERIFICADO</span>';
+  if(type==="rumor")return '<span class="badge rumor">⚠ NÃO VERIFICADO</span>';
+  return "";
+}
+
+function renderPost(post){
+  const user=users[post.user]||users[0];
+  const liked=likedPostIds.has(post.id);
+
+  return `
+  <article class="panel post" id="post-${post.id}">
+    <div class="post-header">
+      ${avatar(user)}
+      <div class="author">
+        <strong>${escapeText(user.name)}</strong>
+        <span class="handle">${escapeText(user.handle)} · ${escapeText(post.time)} · ${escapeText(user.role)}</span>
+      </div>
+      ${user.role==="Desenvolvedor" ? '<span class="badge verified">🛠️ DESENVOLVEDOR</span>' : badge(post.type)}
+    </div>
+    <div class="post-text">${escapeText(post.text)}</div>
+    <div class="post-actions">
+      <button class="${liked?"liked":""}" data-action="like" data-post="${post.id}">${liked?"❤️":"♡"} ${post.likes+(liked?1:0)} curtidas</button>
+      <button data-action="toggle-comments" data-post="${post.id}">💬 ${post.comments.length} comentários</button>
+      <button data-action="share" data-post="${post.id}">↗ Compartilhar</button>
+      ${post.type==="rumor"?`<button data-action="verify" data-post="${post.id}">🛡️ Checar</button>`:""}
+    </div>
+    <div class="comments" id="comments-${post.id}">
+      ${post.comments.map(comment=>`<div class="comment">↳ ${escapeText(comment)}</div>`).join("")}
+      <div class="comment-form">
+        <input id="comment-input-${post.id}" maxlength="180" placeholder="Escreva um comentário..." aria-label="Escreva um comentário">
+        <button data-action="add-comment" data-post="${post.id}">Enviar</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderFeed(){
+  let visible=[...posts];
+  if(selectedFilter==="verified")visible=visible.filter(post=>post.type==="verified");
+  if(selectedFilter==="rumor")visible=visible.filter(post=>post.type==="rumor");
+  if(selectedFilter==="recent")visible.sort((a,b)=>b.id-a.id);
+
+  feed.innerHTML=visible.length
+    ?visible.map(renderPost).join("")
+    :'<div class="panel" style="text-align:center;padding:30px">Nenhuma publicação nesta categoria.</div>';
+
+  document.querySelectorAll("[data-filter]").forEach(button=>{
+    button.classList.toggle("active",button.dataset.filter===selectedFilter);
+  });
+}
+
+function showView(viewName){
+  document.querySelectorAll(".view").forEach(view=>view.classList.remove("active"));
+  const target=document.getElementById(viewName+"View");
+  if(target)target.classList.add("active");
+
+  document.querySelectorAll("[data-view]").forEach(button=>{
+    button.classList.toggle("active",button.dataset.view===viewName);
+  });
+
+  document.querySelectorAll("[data-filter]").forEach(button=>{
+    if(button.dataset.filter)button.classList.remove("active");
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll("[data-view]").forEach(button=>{
+  button.addEventListener("click",()=>showView(button.dataset.view));
+});
+
+document.querySelectorAll("[data-filter]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    showView("feed");
+    selectedFilter=button.dataset.filter;
+    renderFeed();
+  });
+});
+
+feed.addEventListener("click",event=>{
+  const button=event.target.closest("button[data-action]");
+  if(!button)return;
+
+  const id=Number(button.dataset.post);
+  const post=posts.find(item=>item.id===id);
+  if(!post)return;
+
+  switch(button.dataset.action){
+    case "like":
+      likedPostIds.has(id)?likedPostIds.delete(id):likedPostIds.add(id);
+      renderFeed();
+      break;
+
+    case "toggle-comments":
+      document.getElementById(`comments-${id}`)?.classList.toggle("visible");
+      break;
+
+    case "share":
+      notificationCount++;
+      document.getElementById("notificationCount").textContent=notificationCount;
+      showToast("Publicação compartilhada dentro da simulação!");
+      break;
+
+    case "verify":
+      showToast("Não há fonte citada. Trate esta alegação como não verificada.");
+      break;
+
+    case "add-comment":{
+      const input=document.getElementById(`comment-input-${id}`);
+      const text=input.value.trim();
+      if(!text){
+        showToast("Digite um comentário primeiro.");
+        break;
+      }
+      post.comments.push((currentUser?currentUser.name:"Você")+": "+text);
+      renderFeed();
+      document.getElementById(`comments-${id}`)?.classList.add("visible");
+      showToast("Comentário adicionado!");
+      break;
+    }
+  }
+});
+
+document.getElementById("publish").addEventListener("click",()=>{
+  const text=draft.value.trim();
+  if(!text){
+    showToast("Escreva algo antes de publicar.");
+    draft.focus();
+    return;
+  }
+
+  if(currentUserIndex===null){
+    showToast("Escolha um perfil primeiro.");
+    return;
+  }
+
+  posts.unshift({
+    id:nextPostId++,
+    user:currentUserIndex,
+    time:"agora",
+    text,
+    likes:0,
+    comments:[],
+    type:"normal"
+  });
+
+  draft.value="";
+  selectedFilter="all";
+  showView("feed");
+  renderFeed();
+  showToast("Sua publicação entrou no feed!");
+});
+
+/* =========================================
+   ETAPAS DA HISTÓRIA
+========================================= */
+
+function updateStoryPanel(){
+  const stage=storyStages[storyIndex];
+  document.getElementById("stageTitle").textContent=stage.title;
+  document.getElementById("scienceFact").innerHTML=stage.fact;
+  document.getElementById("progressBar").style.width=((storyIndex+1)*25)+"%";
+  document.getElementById("status").textContent=
+    storyIndex===3?"● SIMULAÇÃO CONCLUÍDA":"● SIMULAÇÃO FICTÍCIA";
+}
+
+document.getElementById("advance").addEventListener("click",()=>{
+  if(storyIndex>=storyStages.length-1){
+    showToast("Fim da história! Recarregue a página para recomeçar.");
+    return;
+  }
+
+  storyIndex++;
+  const stage=storyStages[storyIndex];
+  posts.unshift({...stage.post,id:nextPostId++,comments:[...stage.post.comments]});
+  notificationCount+=2;
+  document.getElementById("notificationCount").textContent=notificationCount;
+  updateStoryPanel();
+  selectedFilter="all";
+  renderFeed();
+  showToast("A história avançou! Novas publicações chegaram.");
+});
+
+document.getElementById("nextFact").addEventListener("click",()=>{
+  factIndex=(factIndex+1)%scienceFacts.length;
+  document.getElementById("scienceFact").innerHTML=scienceFacts[factIndex];
+});
+
+/* =========================================
+   SEGURANÇA, NOTIFICAÇÕES E MENU
+========================================= */
+
+function openSafety(){
+  safetyModal.style.display="grid";
+  document.getElementById("closeSafety").focus();
+}
+function closeSafety(){
+  safetyModal.style.display="none";
+}
+
+document.getElementById("safetyLeft").addEventListener("click",openSafety);
+document.getElementById("safetyRight").addEventListener("click",openSafety);
+document.getElementById("closeSafety").addEventListener("click",closeSafety);
+
+safetyModal.addEventListener("click",event=>{
+  if(event.target===safetyModal)closeSafety();
+});
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape")closeSafety();
+});
+
+document.getElementById("notifications").addEventListener("click",()=>{
+  showToast("Você tem "+notificationCount+" notificações fictícias.");
+});
+
+document.getElementById("countUsers").addEventListener("click",()=>{
+  showToast(users.length+" perfis fictícios participam desta simulação, além do seu perfil.");
+});
+
+/* INICIALIZAÇÃO */
+document.getElementById("quizProgress").style.width="0%";
+renderFeaturedUsers();
+renderFeed();
+updateStoryPanel();
+renderQuizQuestion();
+</script>
+</body>
+</html>
