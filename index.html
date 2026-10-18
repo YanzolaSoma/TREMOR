@@ -836,7 +836,7 @@ photoInput.addEventListener("input",()=>{
 });
 
 profilePreview.addEventListener("error",()=>{
-  profilePreview.src="https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba";
+  profilePreview.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKcY1QZ4RBW-TOk9O9-92g7wd8ory-DCQJeUody00JicBm_13tOX7t8l8&s=10";
 });
 
 document.getElementById("profileForm").addEventListener("submit",event=>{
@@ -849,7 +849,7 @@ document.getElementById("profileForm").addEventListener("submit",event=>{
   }
 
   const enteredUrl=photoInput.value.trim();
-  const image=enteredUrl?safeImageUrl(enteredUrl):"https://i.scdn.co/image/ab67616100005174c151a5dd134c40493a3100ba";
+  const image=enteredUrl?safeImageUrl(enteredUrl):"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKcY1QZ4RBW-TOk9O9-92g7wd8ory-DCQJeUody00JicBm_13tOX7t8l8&s=10";
 
   if(enteredUrl&&!image){
     showToast("Esse link não parece ser válido. Confira o endereço.");
